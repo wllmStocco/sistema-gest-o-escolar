@@ -1,88 +1,51 @@
 package upf.com.sistema.repository
 
-import upf.com.sistema.model.TipoUsuario
-import upf.com.sistema.model.Usuario
-import upf.com.sistema.service.QRCodeService
+
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
-import java.util.*
+import upf.com.sistema.model.Materia
 
 @Repository
-class UsuarioRepository(private val qrCodeService: QRCodeService) {
+class MateriaRepository {
 
-    private val usuarios: MutableList<Usuario> = mutableListOf(
-        Usuario(
-            id = 1,
-            nome = "Ana Silva",
-            email = "ana.silva@email.com",
-            senha = "senha123hashed",
-            tipo = TipoUsuario.ADM,
-            dataCriacao = LocalDateTime.now(),
-            qrCode = null
-        ),
-        Usuario(
-            id = 2,
-            nome = "Carlos Souza",
-            email = "carlos.souza@email.com",
-            senha = "senha456hashed",
-            tipo = TipoUsuario.ALUNO,
-            dataCriacao = LocalDateTime.now(),
-            qrCode = Base64.getEncoder().encodeToString(qrCodeService.generateQRCode("2"))
-        ),
-        Usuario(
-            id = 3,
-            nome = "Maria Santos",
-            email = "maria.santos@email.com",
-            senha = "senha789hashed",
-            tipo = TipoUsuario.PROFESSOR,
-            dataCriacao = LocalDateTime.now(),
-            qrCode = null
-        ),
-        Usuario(
-            id = 4,
-            nome = "José Oliveira",
-            email = "jose.oliveira@email.com",
-            senha = "senha012hashed",
-            tipo = TipoUsuario.ALUNO,
-            dataCriacao = LocalDateTime.now(),
-            qrCode = Base64.getEncoder().encodeToString(qrCodeService.generateQRCode("4"))
-        )
+    private val materias: MutableList<Materia> = mutableListOf(
+        Materia(id = 1, nome = "Matemática"),
+        Materia(id = 2, nome = "História"),
+        Materia(id = 3, nome = "Física"),
+        Materia(id = 4, nome = "Química")
     )
 
     private var idCont = 5L // Próximo ID disponível
 
-    fun cadastrar(usuario: Usuario) {
-        val novoId = idCont++
-        val qrCodeImage = Base64.getEncoder().encodeToString(qrCodeService.generateQRCode(novoId.toString()))
-        val usuarioComQrCode = if (usuario.tipo == TipoUsuario.ALUNO) {
-            usuario.copy(id = novoId.toInt(), qrCode = qrCodeImage, dataCriacao = LocalDateTime.now(),)
+    // Função para cadastrar uma nova matéria
+    fun cadastrar(materia: Materia): Materia {
+        val novaMateria = materia.copy(id = idCont++)
+        materias.add(novaMateria)
+        return novaMateria
+    }
+
+    // Função para atualizar uma matéria
+    fun update(id: Long, materiaAtualizada: Materia): Boolean {
+        val materiaIndex = materias.indexOfFirst { it.id.toLong() == id }
+        return if (materiaIndex != -1) {
+            materias[materiaIndex] = materiaAtualizada.copy(id = id)
+            true
         } else {
-            usuario.copy(id = novoId.toInt(), dataCriacao = LocalDateTime.now())
-        }
-        usuarios.add(usuarioComQrCode)
-    }
-
-    fun update(id: Long, usuarioAtualizado: Usuario) {
-        val usuarioIndex = usuarios.indexOfFirst { it.id.toLong() == id }
-        if (usuarioIndex != -1) {
-            val qrCodeImage = Base64.getEncoder().encodeToString(qrCodeService.generateQRCode(id.toString()))
-            val usuarioComQrCode = if (usuarioAtualizado.tipo == TipoUsuario.ALUNO) {
-                usuarioAtualizado.copy(qrCode = qrCodeImage, dataCriacao = usuarios[usuarioIndex].dataCriacao)
-            } else {
-                usuarioAtualizado.copy(qrCode = null, dataCriacao = usuarios[usuarioIndex].dataCriacao)
-            }
-            usuarios[usuarioIndex] = usuarioComQrCode
+            false
         }
     }
 
-    fun findAll(): List<Usuario> {
-        return usuarios
+    // Função para retornar todas as matérias
+    fun findAll(): List<Materia> {
+        return materias
     }
 
-    fun deletar(id: Long) {
-        val usuario = usuarios.firstOrNull { it.id.toLong() == id }
-        usuario?.let {
-            usuarios.remove(it)
-        }
+    // Função para deletar uma matéria
+    fun deletar(id: Long): Boolean {
+        return materias.removeIf { it.id.toLong() == id }
+    }
+
+    // Função para buscar uma matéria pelo ID
+    fun findById(id: Long): Materia? {
+        return materias.firstOrNull { it.id.toLong() == id }
     }
 }

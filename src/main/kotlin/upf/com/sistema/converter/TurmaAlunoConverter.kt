@@ -1,33 +1,26 @@
 package upf.com.sistema.converter
 
-import upf.com.sistema.dto.UsuarioDTO
-import upf.com.sistema.dto.UsuarioResponseDTO
-import upf.com.sistema.model.Usuario
 import org.springframework.stereotype.Component
+import upf.com.sistema.dto.TurmaAlunoDTO
+import upf.com.sistema.dto.TurmaAlunoResponseDTO
+import upf.com.sistema.model.TurmaAluno
 
 @Component
-class UsuarioConverter {
-    fun toUsuario(dto: UsuarioDTO): Usuario {
-        return Usuario(
-            id = dto.id,
-            nome = dto.nome,
-            email = dto.email,
-            senha = dto.senha,
-            tipo = dto.tipo,
-            dataCriacao = dto.dataCriacao,
-            qrCode = dto.qrCode
+class TurmaAlunoConverter {
+
+    fun toTurmaAluno(dto: TurmaAlunoDTO): TurmaAluno {
+        return TurmaAluno(
+            idTurmaAluno = dto.idTurmaAluno,
+            idTurma = dto.idTurma,
+            idAluno = dto.idAluno
         )
     }
 
-    fun toUsuarioResponseDTO(usuario: Usuario): UsuarioResponseDTO {
-        return UsuarioResponseDTO(
-            id = usuario.id,
-            nome = usuario.nome,
-            email = usuario.email,
-            senha = usuario.senha,
-            tipo = usuario.tipo,
-            dataCriacao = usuario.dataCriacao,
-            qrCode = usuario.qrCode
+    fun toTurmaAlunoResponseDTO(turmaAluno: TurmaAluno): TurmaAlunoResponseDTO {
+        return TurmaAlunoResponseDTO(
+            idTurmaAluno = turmaAluno.idTurmaAluno,
+            idTurma = turmaAluno.idTurma,
+            idAluno = turmaAluno.idAluno
         )
     }
 }

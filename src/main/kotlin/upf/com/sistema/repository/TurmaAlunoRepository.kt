@@ -1,88 +1,39 @@
 package upf.com.sistema.repository
 
-import upf.com.sistema.model.TipoUsuario
-import upf.com.sistema.model.Usuario
-import upf.com.sistema.service.QRCodeService
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
-import java.util.*
+import upf.com.sistema.model.TurmaAluno
 
 @Repository
-class UsuarioRepository(private val qrCodeService: QRCodeService) {
+class TurmaAlunoRepository {
 
-    private val usuarios: MutableList<Usuario> = mutableListOf(
-        Usuario(
-            id = 1,
-            nome = "Ana Silva",
-            email = "ana.silva@email.com",
-            senha = "senha123hashed",
-            tipo = TipoUsuario.ADM,
-            dataCriacao = LocalDateTime.now(),
-            qrCode = null
-        ),
-        Usuario(
-            id = 2,
-            nome = "Carlos Souza",
-            email = "carlos.souza@email.com",
-            senha = "senha456hashed",
-            tipo = TipoUsuario.ALUNO,
-            dataCriacao = LocalDateTime.now(),
-            qrCode = Base64.getEncoder().encodeToString(qrCodeService.generateQRCode("2"))
-        ),
-        Usuario(
-            id = 3,
-            nome = "Maria Santos",
-            email = "maria.santos@email.com",
-            senha = "senha789hashed",
-            tipo = TipoUsuario.PROFESSOR,
-            dataCriacao = LocalDateTime.now(),
-            qrCode = null
-        ),
-        Usuario(
-            id = 4,
-            nome = "José Oliveira",
-            email = "jose.oliveira@email.com",
-            senha = "senha012hashed",
-            tipo = TipoUsuario.ALUNO,
-            dataCriacao = LocalDateTime.now(),
-            qrCode = Base64.getEncoder().encodeToString(qrCodeService.generateQRCode("4"))
-        )
+    private val turmaAlunos: MutableList<TurmaAluno> = mutableListOf(
+        TurmaAluno(idTurmaAluno = 1, idTurma = 1, idAluno = 2),
+        TurmaAluno(idTurmaAluno = 2, idTurma = 1, idAluno = 4),
+        TurmaAluno(idTurmaAluno = 3, idTurma = 2, idAluno = 2),
+        TurmaAluno(idTurmaAluno = 4, idTurma = 3, idAluno = 4)
     )
 
     private var idCont = 5L // Próximo ID disponível
 
-    fun cadastrar(usuario: Usuario) {
-        val novoId = idCont++
-        val qrCodeImage = Base64.getEncoder().encodeToString(qrCodeService.generateQRCode(novoId.toString()))
-        val usuarioComQrCode = if (usuario.tipo == TipoUsuario.ALUNO) {
-            usuario.copy(id = novoId.toInt(), qrCode = qrCodeImage, dataCriacao = LocalDateTime.now(),)
-        } else {
-            usuario.copy(id = novoId.toInt(), dataCriacao = LocalDateTime.now())
-        }
-        usuarios.add(usuarioComQrCode)
+    fun findAll(): List<TurmaAluno> = turmaAlunos
+
+    fun findById(id: Long): TurmaAluno? {
+        return turmaAlunos.firstOrNull { it.idTurmaAluno.toLong() == id }
     }
 
-    fun update(id: Long, usuarioAtualizado: Usuario) {
-        val usuarioIndex = usuarios.indexOfFirst { it.id.toLong() == id }
-        if (usuarioIndex != -1) {
-            val qrCodeImage = Base64.getEncoder().encodeToString(qrCodeService.generateQRCode(id.toString()))
-            val usuarioComQrCode = if (usuarioAtualizado.tipo == TipoUsuario.ALUNO) {
-                usuarioAtualizado.copy(qrCode = qrCodeImage, dataCriacao = usuarios[usuarioIndex].dataCriacao)
-            } else {
-                usuarioAtualizado.copy(qrCode = null, dataCriacao = usuarios[usuarioIndex].dataCriacao)
-            }
-            usuarios[usuarioIndex] = usuarioComQrCode
+    fun cadastrar(turmaAluno: TurmaAluno) {
+        val novaTurmaAluno = turmaAluno.copy(idTurmaAluno = idCont++)
+        turmaAlunos.add(novaTurmaAluno)
+    }
+
+    fun update(id: Long, turmaAlunoAtualizado: TurmaAluno) {
+        val index = turmaAlunos.indexOfFirst { it.idTurmaAluno.toLong() == id }
+        if (index != -1) {
+            turmaAlunos[index] = turmaAlunoAtualizado.copy(idTurmaAluno = id)
         }
     }
 
-    fun findAll(): List<Usuario> {
-        return usuarios
-    }
-
-    fun deletar(id: Long) {
-        val usuario = usuarios.firstOrNull { it.id.toLong() == id }
-        usuario?.let {
-            usuarios.remove(it)
-        }
+    fun deletar(id: Long): Boolean {
+        return turmaAlunos.removeIf { it.idTurmaAluno.toLong() == id }
     }
 }

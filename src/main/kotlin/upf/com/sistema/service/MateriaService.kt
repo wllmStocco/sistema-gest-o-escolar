@@ -5,29 +5,39 @@ import upf.com.sistema.dto.UsuarioDTO
 import upf.com.sistema.dto.UsuarioResponseDTO
 import upf.com.sistema.repository.UsuarioRepository
 import org.springframework.stereotype.Service
+import upf.com.sistema.converter.MateriaConverter
+import upf.com.sistema.dto.MateriaDTO
+import upf.com.sistema.dto.MateriaResponseDTO
+import upf.com.sistema.repository.MateriaRepository
 
 @Service
-class UsuarioService(private val repository: UsuarioRepository,
-                     private val converter: UsuarioConverter
+class MateriaService(
+    private val repository: MateriaRepository,
+    private val converter: MateriaConverter
 ) {
-    fun listar(): List<UsuarioResponseDTO> {
+
+    fun listar(): List<MateriaResponseDTO> {
         return repository.findAll()
-                .map(converter::toUsuarioResponseDTO)
+            .map(converter::toMateriaResponseDTO)
     }
-    fun buscarPorId(id: Long): UsuarioResponseDTO {
-        val usuario = repository.findAll().first{ it.id.toLong() == id}
-        return converter.toUsuarioResponseDTO(usuario)
+
+    fun buscarPorId(id: Long): MateriaResponseDTO {
+        val materia = repository.findById(id)
+            ?: throw NoSuchElementException("Matéria com ID $id não encontrada")
+        return converter.toMateriaResponseDTO(materia)
     }
-    fun cadastrar(usuario: UsuarioDTO) {
-        repository.cadastrar(converter.toUsuario(usuario))
+
+    fun cadastrar(materiaDTO: MateriaDTO) {
+        repository.cadastrar(converter.toMateria(materiaDTO))
     }
-    fun atualizar(id: Long, dto: UsuarioDTO) {
-        repository.update(id, converter.toUsuario(dto))
+
+    fun atualizar(id: Long, dto: MateriaDTO) {
+        repository.update(id, converter.toMateria(dto))
     }
+
     fun deletar(id: Long) {
         repository.deletar(id)
     }
-
 }
 
 

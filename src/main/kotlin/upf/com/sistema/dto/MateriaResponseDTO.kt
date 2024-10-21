@@ -1,7 +1,7 @@
 package upf.com.sistema.dto
 
 
-data class MeteriaResponseDTO(
-    val id: Int,
+data class MateriaResponseDTO(
+    val id: Number,
     val nome: String
 )

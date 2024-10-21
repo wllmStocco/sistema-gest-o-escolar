@@ -5,29 +5,38 @@ import upf.com.sistema.dto.UsuarioDTO
 import upf.com.sistema.dto.UsuarioResponseDTO
 import upf.com.sistema.repository.UsuarioRepository
 import org.springframework.stereotype.Service
+import upf.com.sistema.converter.TurmaAlunoConverter
+import upf.com.sistema.dto.TurmaAlunoDTO
+import upf.com.sistema.dto.TurmaAlunoResponseDTO
+import upf.com.sistema.repository.TurmaAlunoRepository
 
 @Service
-class UsuarioService(private val repository: UsuarioRepository,
-                     private val converter: UsuarioConverter
+class TurmaAlunoService(private val repository: TurmaAlunoRepository,
+                        private val converter: TurmaAlunoConverter
 ) {
-    fun listar(): List<UsuarioResponseDTO> {
-        return repository.findAll()
-                .map(converter::toUsuarioResponseDTO)
+
+    fun listar(): List<TurmaAlunoResponseDTO> {
+        return repository.findAll().map(converter::toTurmaAlunoResponseDTO)
     }
-    fun buscarPorId(id: Long): UsuarioResponseDTO {
-        val usuario = repository.findAll().first{ it.id.toLong() == id}
-        return converter.toUsuarioResponseDTO(usuario)
+
+    fun buscarPorId(id: Long): TurmaAlunoResponseDTO {
+        val turmaAluno = repository.findById(id)
+            ?: throw IllegalArgumentException("TurmaAluno com ID $id não encontrado.")
+        return converter.toTurmaAlunoResponseDTO(turmaAluno)
     }
-    fun cadastrar(usuario: UsuarioDTO) {
-        repository.cadastrar(converter.toUsuario(usuario))
+
+    fun cadastrar(dto: TurmaAlunoDTO) {
+        repository.cadastrar(converter.toTurmaAluno(dto))
     }
-    fun atualizar(id: Long, dto: UsuarioDTO) {
-        repository.update(id, converter.toUsuario(dto))
+
+    fun atualizar(id: Long, dto: TurmaAlunoDTO) {
+        repository.update(id, converter.toTurmaAluno(dto))
     }
+
     fun deletar(id: Long) {
-        repository.deletar(id)
+        val sucesso = repository.deletar(id)
+        if (!sucesso) {
+            throw IllegalArgumentException("Falha ao deletar TurmaAluno com ID $id. Não encontrado.")
+        }
     }
-
 }
-
-

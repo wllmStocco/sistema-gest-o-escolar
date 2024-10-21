@@ -1,33 +1,38 @@
 package upf.com.sistema.controller
 
-import jakarta.validation.Valid
-import upf.com.sistema.service.UsuarioService
+
 import org.springframework.web.bind.annotation.*
-import upf.com.sistema.dto.UsuarioDTO
-import upf.com.sistema.dto.UsuarioResponseDTO
+import upf.com.sistema.dto.TurmaAlunoDTO
+import upf.com.sistema.dto.TurmaAlunoResponseDTO
+import upf.com.sistema.service.TurmaAlunoService
+
 
 @RestController
-@RequestMapping("/usuarios")
-class UsuarioController(val service: UsuarioService) {
+@RequestMapping("/turma-aluno")
+class TurmaAlunoController(val service: TurmaAlunoService) {
+
     @GetMapping
-    fun listar(): List<UsuarioResponseDTO> {
+    fun listar(): List<TurmaAlunoResponseDTO> {
         return service.listar()
     }
+
     @GetMapping("/{id}")
-    fun buscarPorId(@PathVariable id: Long): UsuarioResponseDTO {
+    fun buscarPorId(@PathVariable id: Long): TurmaAlunoResponseDTO {
         return service.buscarPorId(id)
     }
+
     @PostMapping
-    fun cadastrar(@RequestBody @Valid dto: UsuarioDTO) {
+    fun cadastrar(@RequestBody dto: TurmaAlunoDTO) {
         service.cadastrar(dto)
     }
+
     @PutMapping("/{id}")
-    fun atualizar(@PathVariable id: Long, @RequestBody @Valid dto: UsuarioDTO) {
+    fun atualizar(@PathVariable id: Long, @RequestBody dto: TurmaAlunoDTO) {
         service.atualizar(id, dto)
     }
+
     @DeleteMapping("/{id}")
     fun deletar(@PathVariable id: Long) {
         service.deletar(id)
     }
 }
-
